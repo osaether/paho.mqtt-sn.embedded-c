@@ -66,13 +66,13 @@ Mutex::Mutex(void)
 	pthread_mutexattr_t attr;
 	int res = pthread_mutexattr_init(&attr);
 	if (res != 0)
-		WRITELOG("pthread_mutexattr_init returned = %d", res);
+		throw Exception( -1, "pthread_mutexattr_init returned failure");
 	res = pthread_mutex_init(&_mutex, &attr);
 	if (res != 0)
-		WRITELOG("pthread_mutex_init returned = %d", res);
+		throw Exception( -1, "pthread_mutex_init returned failure");
 	res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
 	if (res != 0)
-		WRITELOG("pthread_mutexattr_settype returned = %d", res);
+		throw Exception( -1, "pthread_mutexattr_settype returned failure");
 	WRITELOG("Mutex::Mutex");
 	_shmid = 0;
 	_pmutex = 0;
@@ -121,7 +121,7 @@ Mutex::~Mutex(void)
 		pthread_mutex_unlock(&_mutex);
 		int res = pthread_mutex_destroy(&_mutex);
 		if (res != 0)
-			WRITELOG("pthread_mutex_destroy returned %d", res);
+			throw Exception( -1, "pthread_mutex_destroy failure");
 	}
 	if (_shmid)
 	{
