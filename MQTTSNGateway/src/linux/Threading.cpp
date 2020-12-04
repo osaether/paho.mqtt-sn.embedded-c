@@ -64,9 +64,16 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout)
 Mutex::Mutex(void)
 {
 	pthread_mutexattr_t attr;
-	pthread_mutexattr_init(&attr);
-	pthread_mutex_init(&_mutex, &attr);
-	pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
+	int res = pthread_mutexattr_init(&attr);
+	if (res != 0)
+		WRITELOG("pthread_mutexattr_init returned = %d", res);
+	res = pthread_mutex_init(&_mutex, &attr);
+	if (res != 0)
+		WRITELOG("pthread_mutex_init returned = %d", res);
+	res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
+	if (res != 0)
+		WRITELOG("pthread_mutexattr_settype returned = %d", res);
+	WRITELOG("Mutex::Mutex: %08x", _mutex);
 	_shmid = 0;
 	_pmutex = 0;
 }
@@ -109,9 +116,12 @@ Mutex::~Mutex(void)
 	}
 	else
 	{
+		WRITELOG("Mutex::~Mutex: %08x", _mutex);
 		pthread_mutex_lock(&_mutex);
 		pthread_mutex_unlock(&_mutex);
-		pthread_mutex_destroy(&_mutex);
+		int res = pthread_mutex_destroy(&_mutex);
+		if (res != 0)
+			WRITELOG("pthread_mutex_destroy returned %d", res);
 	}
 	if (_shmid)
 	{
@@ -129,9 +139,10 @@ void Mutex::lock(void)
 	{
 		try
 		{
-			if (pthread_mutex_lock(&_mutex))
+			int res = pthread_mutex_lock(&_mutex);
+			if (res)
 			{
-				throw;
+				WRITELOG("pthread_mutex_lock returned %d", res);
 			}
 		} catch (char* errmsg)
 		{
@@ -151,9 +162,10 @@ void Mutex::unlock(void)
 	{
 		try
 		{
-			if (pthread_mutex_unlock(&_mutex))
+			int res = pthread_mutex_unlock(&_mutex);
+			if (res)
 			{
-				throw;
+				WRITELOG("pthread_mutex_unlock() returned %d", res);
 			}
 		} catch (char* errmsg)
 		{

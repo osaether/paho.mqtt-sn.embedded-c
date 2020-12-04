@@ -93,7 +93,7 @@ LIB :=
 LIBS += $(LIB) -L/usr/local/lib -L/usr/local/opt/openssl/lib/
 
 LDFLAGS :=
-CXXFLAGS := -Wall -O3 -std=c++11
+CXXFLAGS := -Wall -O0 -ggdb3 -Wextra -pedantic -fno-inline -std=c++11
 LDADD := -lpthread -lssl -lcrypto
 OUTDIR := Build
 
