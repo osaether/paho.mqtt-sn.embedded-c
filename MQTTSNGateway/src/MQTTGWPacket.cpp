@@ -495,7 +495,7 @@ void MQTTGWPacket::clearData(void)
 	_remainingLength = 0;
 }
 
-char* MQTTGWPacket::getMsgId(char* pbuf)
+char* MQTTGWPacket::getMsgId(char* pbuf, size_t len)
 {
 	int type = getType();
 
@@ -507,11 +507,11 @@ char* MQTTGWPacket::getMsgId(char* pbuf)
 		getPUBLISH(&pub);
 		if ( _header.bits.dup )
 		{
-			sprintf(pbuf, "+%04X", pub.msgId);
+			snprintf(pbuf, len, "+%04X", pub.msgId);
 		}
 		else
 		{
-			sprintf(pbuf, " %04X", pub.msgId);
+			snprintf(pbuf, len, " %04X", pub.msgId);
 		}
 		break;
 	case SUBSCRIBE:
@@ -522,15 +522,15 @@ char* MQTTGWPacket::getMsgId(char* pbuf)
 	case PUBCOMP:
 	case SUBACK:
 	case UNSUBACK:
-		sprintf(pbuf, " %02X%02X", _data[0], _data[1]);
+		snprintf(pbuf, len, " %02X%02X", _data[0], _data[1]);
 		break;
 	default:
-		sprintf(pbuf, "    ");
+		snprintf(pbuf, len, "    ");
 		break;
 	}
-	if ( strcmp(pbuf, " 0000") == 0 )
+	if ( strncmp(pbuf, " 0000", len) == 0 )
 	{
-		sprintf(pbuf, "    ");
+		snprintf(pbuf, len, "    ");
 	}
 	return pbuf;
 }
@@ -599,7 +599,7 @@ void MQTTGWPacket::setMsgId(int msgId)
 	}
 }
 
-char* MQTTGWPacket::print(char* pbuf)
+char* MQTTGWPacket::print(char* pbuf, size_t buflen)
 {
 	uint8_t packetData[MQTTSNGW_MAX_PACKET_SIZE];
 	char* ptr = pbuf;
@@ -608,7 +608,7 @@ char* MQTTGWPacket::print(char* pbuf)
 	int size = len > SIZE_OF_LOG_PACKET ? SIZE_OF_LOG_PACKET : len;
 	for (int i = 0; i < size; i++)
 	{
-		sprintf(*pptr, " %02X", packetData[i]);
+		buflen -= snprintf(*pptr, buflen, " %02X", packetData[i]);
 		*pptr += 3;
 	}
 	**pptr = 0;

@@ -64,7 +64,8 @@ void ClientRecvTask::run()
 	ClientList* clientList = _gateway->getClientList();
 	EventQue* packetEventQue = _gateway->getPacketEventQue();
 
-	char buf[128];
+	const size_t buflen = 128;
+	char buf[buflen];
 
 	while (true)
 	{
@@ -140,7 +141,7 @@ void ClientRecvTask::run()
 					if ( !packet->isQoSMinusPUBLISH() )
 					{
 						log(clientName, packet);
-						WRITELOG("%s %s  %s can send only PUBLISH with QoS-1.%s\n", ERRMSG_HEADER, clientName, senderAddr->sprint(buf), ERRMSG_FOOTER);
+						WRITELOG("%s %s  %s can send only PUBLISH with QoS-1.%s\n", ERRMSG_HEADER, clientName, senderAddr->sprint(buf, buflen), ERRMSG_FOOTER);
 						delete packet;
 						continue;
 					}
@@ -171,7 +172,7 @@ void ClientRecvTask::run()
 				if ( !packet->getCONNECT(&data) )
 				{
 					log(0, packet, &data.clientID);
-					WRITELOG("%s CONNECT message form %s is incorrect.%s\n", ERRMSG_HEADER, senderAddr->sprint(buf), ERRMSG_FOOTER);
+					WRITELOG("%s CONNECT message form %s is incorrect.%s\n", ERRMSG_HEADER, senderAddr->sprint(buf, buflen), ERRMSG_FOOTER);
 					delete packet;
 					continue;
 				}
@@ -209,7 +210,7 @@ void ClientRecvTask::run()
 
 				if ( client == nullptr )
 				{
-	                WRITELOG("%s Client(%s) was rejected. CONNECT message has been discarded.%s\n", ERRMSG_HEADER, senderAddr->sprint(buf), ERRMSG_FOOTER);
+	                WRITELOG("%s Client(%s) was rejected. CONNECT message has been discarded.%s\n", ERRMSG_HEADER, senderAddr->sprint(buf, buflen), ERRMSG_FOOTER);
 					delete packet;
 					continue;
 				}
@@ -224,11 +225,11 @@ void ClientRecvTask::run()
 				log(client, packet, 0);
 				if ( packet->getType() == MQTTSN_ENCAPSULATED )
 				{
-					WRITELOG("%s MQTTSNGWClientRecvTask  Forwarder(%s) is not declared by ClientList file. message has been discarded.%s\n", ERRMSG_HEADER, _sensorNetwork->getSenderAddress()->sprint(buf), ERRMSG_FOOTER);
+					WRITELOG("%s MQTTSNGWClientRecvTask  Forwarder(%s) is not declared by ClientList file. message has been discarded.%s\n", ERRMSG_HEADER, _sensorNetwork->getSenderAddress()->sprint(buf, buflen), ERRMSG_FOOTER);
 				}
 				else
 				{
-					WRITELOG("%s MQTTSNGWClientRecvTask  Client(%s) is not connecting. message has been discarded.%s\n", ERRMSG_HEADER, senderAddr->sprint(buf), ERRMSG_FOOTER);
+					WRITELOG("%s MQTTSNGWClientRecvTask  Client(%s) is not connecting. message has been discarded.%s\n", ERRMSG_HEADER, senderAddr->sprint(buf, buflen), ERRMSG_FOOTER);
 				}
 				delete packet;
 			}
@@ -269,43 +270,45 @@ void ClientRecvTask::log(Client* client, MQTTSNPacket* packet, MQTTSNString* id)
 
 void ClientRecvTask::log(const char* clientId, MQTTSNPacket* packet)
 {
-    char pbuf[ SIZE_OF_LOG_PACKET * 3 + 1];
-    char msgId[6];
+	const size_t idlen = 6;
+	const size_t buflen = SIZE_OF_LOG_PACKET * 3 + 1;
+    char pbuf[buflen];
+    char msgId[idlen];
 
     switch (packet->getType())
     {
     case MQTTSN_SEARCHGW:
-        WRITELOG(FORMAT_Y_G_G_NL, currentDateTime(), packet->getName(), LEFTARROW, CLIENT, packet->print(pbuf));
+        WRITELOG(FORMAT_Y_G_G_NL, currentDateTime(), packet->getName(), LEFTARROW, CLIENT, packet->print(pbuf, buflen));
         break;
     case MQTTSN_CONNECT:
     case MQTTSN_PINGREQ:
-        WRITELOG(FORMAT_Y_G_G_NL, currentDateTime(), packet->getName(), LEFTARROW, clientId, packet->print(pbuf));
+        WRITELOG(FORMAT_Y_G_G_NL, currentDateTime(), packet->getName(), LEFTARROW, clientId, packet->print(pbuf, buflen));
         break;
     case MQTTSN_DISCONNECT:
     case MQTTSN_WILLTOPICUPD:
     case MQTTSN_WILLMSGUPD:
     case MQTTSN_WILLTOPIC:
     case MQTTSN_WILLMSG:
-        WRITELOG(FORMAT_Y_G_G, currentDateTime(), packet->getName(), LEFTARROW, clientId, packet->print(pbuf));
+        WRITELOG(FORMAT_Y_G_G, currentDateTime(), packet->getName(), LEFTARROW, clientId, packet->print(pbuf, buflen));
         break;
     case MQTTSN_PUBLISH:
     case MQTTSN_REGISTER:
     case MQTTSN_SUBSCRIBE:
     case MQTTSN_UNSUBSCRIBE:
-        WRITELOG(FORMAT_G_MSGID_G_G_NL, currentDateTime(), packet->getName(), packet->getMsgId(msgId), LEFTARROW, clientId, packet->print(pbuf));
+        WRITELOG(FORMAT_G_MSGID_G_G_NL, currentDateTime(), packet->getName(), packet->getMsgId(msgId, idlen), LEFTARROW, clientId, packet->print(pbuf, buflen));
         break;
     case MQTTSN_REGACK:
     case MQTTSN_PUBACK:
     case MQTTSN_PUBREC:
     case MQTTSN_PUBREL:
     case MQTTSN_PUBCOMP:
-        WRITELOG(FORMAT_G_MSGID_G_G, currentDateTime(), packet->getName(), packet->getMsgId(msgId), LEFTARROW, clientId, packet->print(pbuf));
+        WRITELOG(FORMAT_G_MSGID_G_G, currentDateTime(), packet->getName(), packet->getMsgId(msgId, idlen), LEFTARROW, clientId, packet->print(pbuf, buflen));
         break;
     case MQTTSN_ENCAPSULATED:
-            WRITELOG(FORMAT_Y_G_G, currentDateTime(), packet->getName(), LEFTARROW, clientId, packet->print(pbuf));
+            WRITELOG(FORMAT_Y_G_G, currentDateTime(), packet->getName(), LEFTARROW, clientId, packet->print(pbuf, buflen));
             break;
     default:
-        WRITELOG(FORMAT_W_NL, currentDateTime(), packet->getName(), LEFTARROW, clientId, packet->print(pbuf));
+        WRITELOG(FORMAT_W_NL, currentDateTime(), packet->getName(), LEFTARROW, clientId, packet->print(pbuf, buflen));
         break;
     }
 }

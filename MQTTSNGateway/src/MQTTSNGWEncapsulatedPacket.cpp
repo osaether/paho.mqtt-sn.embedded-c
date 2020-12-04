@@ -159,7 +159,7 @@ void MQTTSNGWEncapsulatedPacket::setWirelessNodeId(WirelessNodeId* id)
     _id.setId(id);
 }
 
-char* MQTTSNGWEncapsulatedPacket::print(char* pbuf)
+char* MQTTSNGWEncapsulatedPacket::print(char* pbuf, size_t buflen)
 {
     char* ptr = pbuf;
     char** pptr = &pbuf;
@@ -170,7 +170,7 @@ char* MQTTSNGWEncapsulatedPacket::print(char* pbuf)
 
     for (int i = 1; i < size; i++)
     {
-        sprintf(*pptr, " %02X", *(buf + i));
+        buflen -= snprintf(*pptr, buflen, " %02X", *(buf + i));
         *pptr += 3;
     }
     **pptr = 0;

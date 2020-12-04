@@ -129,7 +129,8 @@ Client* AdapterManager::getClient(Client* client)
 
 int AdapterManager::unicastToClient(Client* client, MQTTSNPacket* packet, ClientSendTask* task)
 {
-	char pbuf[SIZE_OF_LOG_PACKET * 3];
+	const size_t buflen = SIZE_OF_LOG_PACKET * 3;
+	char pbuf[buflen];
 	Forwarder* fwd = client->getForwarder();
 	int rc = 0;
 
@@ -139,7 +140,7 @@ int AdapterManager::unicastToClient(Client* client, MQTTSNPacket* packet, Client
 		WirelessNodeId* wnId = fwd->getWirelessNodeId(client);
 		encap.setWirelessNodeId(wnId);
 		task->log(client, packet);
-		WRITELOG(FORMAT_Y_W_G, currentDateTime(), encap.getName(), RIGHTARROW, fwd->getId(), encap.print(pbuf));
+		WRITELOG(FORMAT_Y_W_G, currentDateTime(), encap.getName(), RIGHTARROW, fwd->getId(), encap.print(pbuf, buflen));
 		rc = encap.unicast(_gateway->getSensorNetwork(),fwd->getSensorNetAddr());
 	}
 	else

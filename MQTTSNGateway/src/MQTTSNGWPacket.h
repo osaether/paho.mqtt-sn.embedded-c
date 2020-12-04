@@ -84,10 +84,10 @@ public:
 	bool isAccepted(void);
 	bool isDuplicate(void);
 	bool isQoSMinusPUBLISH(void);
-	char* getMsgId(char* buf);
+	char* getMsgId(char* buf, size_t len);
 	int getMsgId(void);
 	void setMsgId(uint16_t msgId);
-	char* print(char* buf);
+	char* print(char* buf, size_t len);
 
 private:
 	unsigned char* _buf;    // Ptr to a packet data

@@ -50,7 +50,7 @@ public:
     MQTTSNPacket* getMQTTSNPacket(void);
     void setWirelessNodeId(WirelessNodeId* id);
     WirelessNodeId* getWirelessNodeId(void);
-    char* print(char* buf);
+    char* print(char* buf, size_t buflen);
 
 private:
     MQTTSNPacket* _mqttsn;

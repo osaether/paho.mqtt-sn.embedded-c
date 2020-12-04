@@ -94,15 +94,17 @@ void ClientSendTask::run()
 
 void ClientSendTask::log(Client* client, MQTTSNPacket* packet)
 {
-	char pbuf[SIZE_OF_LOG_PACKET * 3 + 1];
-	char msgId[6];
+	const size_t idlen = 6;
+	const size_t buflen = SIZE_OF_LOG_PACKET * 3 + 1;
+	char pbuf[buflen];
+	char msgId[idlen];
 	const char* clientId = client ? (const char*)client->getClientId() : UNKNOWNCL ;
 
 	switch (packet->getType())
 	{
 	case MQTTSN_ADVERTISE:
 	case MQTTSN_GWINFO:
-		WRITELOG(FORMAT_Y_W_G, currentDateTime(), packet->getName(), RIGHTARROW, CLIENTS, packet->print(pbuf));
+		WRITELOG(FORMAT_Y_W_G, currentDateTime(), packet->getName(), RIGHTARROW, CLIENTS, packet->print(pbuf, buflen));
 		break;
 	case MQTTSN_CONNACK:
 	case MQTTSN_DISCONNECT:
@@ -111,11 +113,11 @@ void ClientSendTask::log(Client* client, MQTTSNPacket* packet)
 	case MQTTSN_WILLTOPICRESP:
 	case MQTTSN_WILLMSGRESP:
 	case MQTTSN_PINGRESP:
-		WRITELOG(FORMAT_Y_W_G, currentDateTime(), packet->getName(), RIGHTARROW, clientId, packet->print(pbuf));
+		WRITELOG(FORMAT_Y_W_G, currentDateTime(), packet->getName(), RIGHTARROW, clientId, packet->print(pbuf, buflen));
 		break;
 	case MQTTSN_REGISTER:
 	case MQTTSN_PUBLISH:
-		WRITELOG(FORMAT_W_MSGID_W_G, currentDateTime(), packet->getName(), packet->getMsgId(msgId), RIGHTARROW, clientId,	packet->print(pbuf));
+		WRITELOG(FORMAT_W_MSGID_W_G, currentDateTime(), packet->getName(), packet->getMsgId(msgId, idlen), RIGHTARROW, clientId,	packet->print(pbuf, buflen));
 		break;
 	case MQTTSN_REGACK:
 	case MQTTSN_PUBACK:
@@ -124,7 +126,7 @@ void ClientSendTask::log(Client* client, MQTTSNPacket* packet)
 	case MQTTSN_PUBCOMP:
 	case MQTTSN_SUBACK:
 	case MQTTSN_UNSUBACK:
-		WRITELOG(FORMAT_W_MSGID_W_G, currentDateTime(), packet->getName(), packet->getMsgId(msgId), RIGHTARROW, clientId,	packet->print(pbuf));
+		WRITELOG(FORMAT_W_MSGID_W_G, currentDateTime(), packet->getName(), packet->getMsgId(msgId, idlen), RIGHTARROW, clientId,	packet->print(pbuf, buflen));
 		break;
 	default:
 		break;

@@ -419,7 +419,7 @@ int MQTTSNPacket::getWILLMSGUPD(MQTTSNString* willMsg)
 	return MQTTSNDeserialize_willmsgupd(willMsg, _buf, _bufLen);
 }
 
-char* MQTTSNPacket::print(char* pbuf)
+char* MQTTSNPacket::print(char* pbuf, size_t len)
 {
 	char* ptr = pbuf;
 	char** pptr = &pbuf;
@@ -427,14 +427,14 @@ char* MQTTSNPacket::print(char* pbuf)
 
 	for (int i = 0; i < size; i++)
 	{
-		sprintf(*pptr, " %02X", *(_buf + i));
+		snprintf(*pptr, len, " %02X", *(_buf + i));
 		*pptr += 3;
 	}
 	**pptr = 0;
 	return ptr;
 }
 
-char* MQTTSNPacket::getMsgId(char* pbuf)
+char* MQTTSNPacket::getMsgId(char* pbuf, size_t len)
 {
 	int value = 0;
 	int p = 0;
@@ -445,39 +445,39 @@ char* MQTTSNPacket::getMsgId(char* pbuf)
 		p = MQTTSNPacket_decode(_buf, _bufLen, &value);
 		if ( _buf[p + 1] & 0x80 )
 		{
-			sprintf(pbuf, "+%02X%02X", _buf[p + 4], _buf[p + 5]);
+			snprintf(pbuf, len, "+%02X%02X", _buf[p + 4], _buf[p + 5]);
 		}
 		else
 		{
-			sprintf(pbuf, " %02X%02X", _buf[p + 4], _buf[p + 5]);
+			snprintf(pbuf, len, " %02X%02X", _buf[p + 4], _buf[p + 5]);
 		}
 		break;
 	case MQTTSN_PUBACK:
 	case MQTTSN_REGISTER:
 	case MQTTSN_REGACK:
-		sprintf(pbuf, " %02X%02X", _buf[4], _buf[5]);
+		snprintf(pbuf, len, " %02X%02X", _buf[4], _buf[5]);
 		break;
 	case MQTTSN_PUBREC:
 	case MQTTSN_PUBREL:
 	case MQTTSN_PUBCOMP:
 	case MQTTSN_UNSUBACK:
-		sprintf(pbuf, " %02X%02X", _buf[2], _buf[3]);
+		snprintf(pbuf, len, " %02X%02X", _buf[2], _buf[3]);
 		break;
 	case MQTTSN_SUBSCRIBE:
 	case MQTTSN_UNSUBSCRIBE:
 		p = MQTTSNPacket_decode(_buf, _bufLen, &value);
-		sprintf(pbuf, " %02X%02X", _buf[p + 2], _buf[p + 3]);
+		snprintf(pbuf, len, " %02X%02X", _buf[p + 2], _buf[p + 3]);
 		break;
 	case MQTTSN_SUBACK:
-		sprintf(pbuf, " %02X%02X", _buf[5], _buf[6]);
+		snprintf(pbuf, len, " %02X%02X", _buf[5], _buf[6]);
 		break;
 	default:
-		sprintf(pbuf, "    ");
+		snprintf(pbuf, len, "    ");
 		break;
 	}
-	if ( strcmp(pbuf, " 0000") == 0 )
+	if ( strncmp(pbuf, " 0000", len) == 0 )
 	{
-		sprintf(pbuf, "    ");
+		snprintf(pbuf, len, "    ");
 	}
 	return pbuf;
 }

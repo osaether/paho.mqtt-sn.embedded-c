@@ -222,10 +222,10 @@ public:
 	int setUNSUBSCRIBE(const char* topics, unsigned short msgid);
 
 	UTF8String getTopic(void);
-	char* getMsgId(char* buf);
+	char* getMsgId(char* buf, size_t len);
 	int getMsgId(void);
 	void setMsgId(int msgId);
-	char* print(char* buf);
+	char* print(char* buf, size_t buflen);
 	MQTTGWPacket& operator =(MQTTGWPacket& packet);
 
 private:

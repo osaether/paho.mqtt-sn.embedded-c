@@ -50,7 +50,7 @@ public:
 	char* getAddress(void);
 	bool isMatch(SensorNetAddress* addr);
 	SensorNetAddress& operator =(SensorNetAddress& addr);
-	char* sprint(char* buf);
+	char* sprint(char* buf, size_t buflen);
 private:
 	uint16_t _portNo;
 	char _addrString[INET6_ADDRSTRLEN+1];

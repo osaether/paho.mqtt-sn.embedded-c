@@ -134,12 +134,13 @@ SensorNetAddress& SensorNetAddress::operator =(SensorNetAddress& addr)
 }
 
 
-char* SensorNetAddress::sprint(char* buf)
+char* SensorNetAddress::sprint(char* buf, size_t buflen)
 {
 	char ip[INET6_ADDRSTRLEN];
 	inet_ntop(AF_INET6, &(_IpAddr.sin6_addr), ip, INET6_ADDRSTRLEN);
-	sprintf( buf, "%s:", ip);
-	sprintf( buf + strlen(buf), "%d", ntohs(_portNo));
+	snprintf(buf, buflen, "%s:", ip);
+	buflen -= strlen(buf);
+	snprintf(buf + strlen(buf), buflen, "%d", ntohs(_portNo));
 	return buf;
 }
 

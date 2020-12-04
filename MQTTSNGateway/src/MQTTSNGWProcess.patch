@@ -1,0 +1,11 @@
+--- MQTTSNGWProcess.cpp	2020-11-19 17:52:55.664238357 +0100
++++ MQTTSNGWProcess.cpp.new	2020-11-20 17:50:44.140514473 +0100
+@@ -294,7 +294,7 @@
+ 	}
+ 	catch(...)
+ 	{
+-		throw;
++		throw false;
+ 	}
+ }
+ 
