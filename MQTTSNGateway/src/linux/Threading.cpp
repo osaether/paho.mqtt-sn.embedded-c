@@ -73,7 +73,6 @@ Mutex::Mutex(void)
 	res = pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_ERRORCHECK);
 	if (res != 0)
 		throw Exception( -1, "pthread_mutexattr_settype returned failure");
-	WRITELOG("Mutex::Mutex");
 	_shmid = 0;
 	_pmutex = 0;
 }
@@ -116,7 +115,6 @@ Mutex::~Mutex(void)
 	}
 	else
 	{
-		WRITELOG("Mutex::~Mutex");
 		pthread_mutex_lock(&_mutex);
 		pthread_mutex_unlock(&_mutex);
 		int res = pthread_mutex_destroy(&_mutex);
