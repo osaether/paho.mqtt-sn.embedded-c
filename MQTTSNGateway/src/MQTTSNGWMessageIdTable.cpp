@@ -29,7 +29,7 @@ MessageIdTable::MessageIdTable()
 
 MessageIdTable::~MessageIdTable()
 {
-	_mutex.lock();
+	_mutex.lock(24);
 	if ( _head != nullptr )
 	{
 		MessageIdElement* p = _tail;
@@ -42,7 +42,7 @@ MessageIdTable::~MessageIdTable()
 		}
 		_head = _tail = nullptr;
 	}
-	_mutex.unlock();
+	_mutex.unlock(24);
 }
 
 MessageIdElement* MessageIdTable::add(Aggregater* aggregater, Client* client, uint16_t clientMsgId)
@@ -57,7 +57,7 @@ MessageIdElement* MessageIdTable::add(Aggregater* aggregater, Client* client, ui
 	{
 		return nullptr;
 	}
-	_mutex.lock();
+	_mutex.lock(25);
 	if ( _head == nullptr )
 	{
 		elm->_msgId = aggregater->msgId();
@@ -83,7 +83,7 @@ MessageIdElement* MessageIdTable::add(Aggregater* aggregater, Client* client, ui
 			elm = nullptr;
 		}
 	}
-	_mutex.unlock();
+	_mutex.unlock(25);
 	return elm;
 }
 
@@ -120,7 +120,7 @@ Client* MessageIdTable::getClientMsgId(uint16_t msgId, uint16_t* clientMsgId)
 {
 	Client* clt = nullptr;
 	*clientMsgId = 0;
-	_mutex.lock();
+	_mutex.lock(26);
 	MessageIdElement* p = find(msgId);
 	if ( p != nullptr )
 	{
@@ -128,16 +128,16 @@ Client* MessageIdTable::getClientMsgId(uint16_t msgId, uint16_t* clientMsgId)
 		*clientMsgId = p->_clientMsgId;
 		clear(p);
 	}
-	_mutex.unlock();
+	_mutex.unlock(26);
 	return clt;
 }
 
 void MessageIdTable::erase(uint16_t msgId)
 {
-	_mutex.lock();
+	_mutex.lock(27);
 	MessageIdElement* p = find(msgId);
 	clear(p);
-	_mutex.unlock();
+	_mutex.unlock(27);
 }
 
 void MessageIdTable::clear(MessageIdElement* elm)

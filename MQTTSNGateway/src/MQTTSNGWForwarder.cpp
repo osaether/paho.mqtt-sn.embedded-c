@@ -169,7 +169,7 @@ void Forwarder::addClient(Client* client, WirelessNodeId* id)
 Client* Forwarder::getClient(WirelessNodeId* id)
 {
     Client* cl = nullptr;
-    _mutex.lock();
+    _mutex.lock(21);
     ForwarderElement* p = _headClient;
     while ( p )
     {
@@ -183,7 +183,7 @@ Client* Forwarder::getClient(WirelessNodeId* id)
             p = p->_next;
         }
     }
-    _mutex.unlock();
+    _mutex.unlock(21);
     return cl;
 }
 
@@ -195,7 +195,7 @@ const char* Forwarder::getName(void)
 WirelessNodeId* Forwarder::getWirelessNodeId(Client* client)
 {
     WirelessNodeId* nodeId = nullptr;
-    _mutex.lock();
+    _mutex.lock(22);
     ForwarderElement* p = _headClient;
     while ( p )
     {
@@ -209,14 +209,14 @@ WirelessNodeId* Forwarder::getWirelessNodeId(Client* client)
             p = p->_next;
         }
     }
-    _mutex.unlock();
+    _mutex.unlock(22);
     return nodeId;
 }
 
 void Forwarder::eraseClient(Client* client)
 {
     ForwarderElement* prev = nullptr;
-    _mutex.lock();
+    _mutex.lock(23);
     ForwarderElement* p = _headClient;
 
     while ( p )
@@ -239,7 +239,7 @@ void Forwarder::eraseClient(Client* client)
             p = p->_next;
         }
     }
-    _mutex.unlock();
+    _mutex.unlock(23);
 }
 
 SensorNetAddress* Forwarder::getSensorNetAddr(void)

@@ -127,7 +127,7 @@ Mutex::~Mutex(void)
 	}
 }
 
-void Mutex::lock(void)
+void Mutex::lock(int n)
 {
 	if (_pmutex)
 	{
@@ -140,7 +140,7 @@ void Mutex::lock(void)
 			int res = pthread_mutex_lock(&_mutex);
 			if (res)
 			{
-				WRITELOG("pthread_mutex_lock returned %d, _count=%u, __nusers=%u, __owner=%d", res, _mutex.__data.__count, _mutex.__data.__nusers, _mutex.__data.__owner);
+				WRITELOG("pthread_mutex_lock(%d) returned %d, _count=%u, __nusers=%u, __owner=%d", n, res, _mutex.__data.__count, _mutex.__data.__nusers, _mutex.__data.__owner);
 
 			}
 		} catch (char* errmsg)
@@ -150,7 +150,7 @@ void Mutex::lock(void)
 	}
 }
 
-void Mutex::unlock(void)
+void Mutex::unlock(int n)
 {
 
 	if (_pmutex)
@@ -164,7 +164,7 @@ void Mutex::unlock(void)
 			int res = pthread_mutex_unlock(&_mutex);
 			if (res)
 			{
-				WRITELOG("pthread_mutex_unlock() returned %d, _count=%u, __nusers=%u, __owner=%d", res, _mutex.__data.__count, _mutex.__data.__nusers, _mutex.__data.__owner);
+				WRITELOG("pthread_mutex_unlock(%d) returned %d, _count=%u, __nusers=%u, __owner=%d", n, res, _mutex.__data.__count, _mutex.__data.__nusers, _mutex.__data.__owner);
 			}
 		} catch (char* errmsg)
 		{
@@ -365,7 +365,7 @@ RingBuffer::~RingBuffer()
 
 void RingBuffer::put(char* data)
 {
-	_pmx->lock();
+	_pmx->lock(39);
 
 	uint16_t dlen = strlen(data);
 	uint16_t blen = *_length - *_end;
@@ -436,13 +436,13 @@ void RingBuffer::put(char* data)
 			}
 		}
 	}
-	_pmx->unlock();
+	_pmx->unlock(39);
 }
 
 int RingBuffer::get(char* buf, int length)
 {
 	int len = 0;
-	_pmx->lock();
+	_pmx->lock(40);
 
 	if (*_end > *_start)
 	{
@@ -493,13 +493,13 @@ int RingBuffer::get(char* buf, int length)
 			len = length;
 		}
 	}
-	_pmx->unlock();
+	_pmx->unlock(40);
 	return len;
 }
 
 void RingBuffer::reset()
 {
-	_pmx->lock();
+	_pmx->lock(41);
 	if ( _start && _end )
 	{
 		*_start = *_end = 0;
@@ -508,7 +508,7 @@ void RingBuffer::reset()
 	{
 		throw Exception(-1, "RingBuffer can't reset. need to clear shared memory.");
 	}
-	_pmx->unlock();
+	_pmx->unlock(41);
 }
 
 /*=====================================

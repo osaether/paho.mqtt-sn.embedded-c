@@ -403,13 +403,13 @@ EventQue::EventQue()
 
 EventQue::~EventQue()
 {
-	_mutex.lock();
+	_mutex.lock(1);
 	while (_que.size() > 0)
 	{
 		delete _que.front();
 		_que.pop();
 	}
-	_mutex.unlock();
+	_mutex.unlock(1);
 }
 
 void  EventQue::setMaxSize(uint16_t maxSize)
@@ -427,10 +427,10 @@ Event* EventQue::wait(void)
 		{
 			_sem.wait();
 		}
-		_mutex.lock();
+		_mutex.lock(2);
 		ev = _que.front();
 		_que.pop();
-		_mutex.unlock();
+		_mutex.unlock(2);
 	}
 	return ev;
 }
@@ -442,7 +442,7 @@ Event* EventQue::timedwait(uint16_t millsec)
 	{
 		_sem.timedwait(millsec);
 	}
-	_mutex.lock();
+	_mutex.lock(3);
 
 	if (_que.size() == 0)
 	{
@@ -454,7 +454,7 @@ Event* EventQue::timedwait(uint16_t millsec)
 		ev = _que.front();
 		_que.pop();
 	}
-	_mutex.unlock();
+	_mutex.unlock(3);
 	return ev;
 }
 
@@ -462,7 +462,7 @@ void EventQue::post(Event* ev)
 {
 	if ( ev )
 	{
-		_mutex.lock();
+		_mutex.lock(4);
 		if ( _que.post(ev) )
 		{
 			_sem.post();
@@ -471,15 +471,15 @@ void EventQue::post(Event* ev)
 		{
 			delete ev;
 		}
-		_mutex.unlock();
+		_mutex.unlock(4);
 	}
 }
 
 int EventQue::size()
 {
-	_mutex.lock();
+	_mutex.lock(5);
 	int sz = _que.size();
-	_mutex.unlock();
+	_mutex.unlock(5);
 	return sz;
 }
 

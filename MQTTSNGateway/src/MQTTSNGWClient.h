@@ -61,9 +61,9 @@ public:
         T* packet;
         if (_que->size() > 0)
         {
-            _mutex.lock();
+            _mutex.lock(11);
             packet = _que->front();
-            _mutex.unlock();
+            _mutex.unlock(11);
             return packet;
         }
         else
@@ -76,9 +76,9 @@ public:
     post(T* packet)
     {
         int rc;
-        _mutex.lock();
+        _mutex.lock(12);
         rc = _que->post(packet);
-        _mutex.unlock();
+        _mutex.unlock(12);
         return rc;
     }
 
@@ -86,21 +86,21 @@ public:
     {
         if (_que->size() > 0)
         {
-            _mutex.lock();
+            _mutex.lock(13);
             _que->pop();
-            _mutex.unlock();
+            _mutex.unlock(13);
         }
     }
 
     void clear()
     {
-        _mutex.lock();
+        _mutex.lock(14);
         while (_que->size() > 0)
         {
             delete _que->front();
             _que->pop();
         }
-        _mutex.unlock();
+        _mutex.unlock(14);
     }
 
     void setMaxSize(int size)

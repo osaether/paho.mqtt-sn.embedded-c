@@ -60,7 +60,7 @@ AggregateTopicElement::AggregateTopicElement(Topic* topic, Client* client)
 
 AggregateTopicElement::~AggregateTopicElement(void)
 {
-	_mutex.lock();
+	_mutex.lock(6);
 	if ( _head != nullptr )
 	{
 		ClientTopicElement* p = _tail;
@@ -72,7 +72,7 @@ AggregateTopicElement::~AggregateTopicElement(void)
 		}
 		_head = _tail = nullptr;
 	}
-	_mutex.unlock();
+	_mutex.unlock(6);
 }
 
 ClientTopicElement* AggregateTopicElement::add(Client* client)
@@ -83,7 +83,7 @@ ClientTopicElement* AggregateTopicElement::add(Client* client)
 		return nullptr;
 	}
 
-	_mutex.lock();
+	_mutex.lock(7);
 
 	if ( _head == nullptr )
 	{
@@ -106,7 +106,7 @@ ClientTopicElement* AggregateTopicElement::add(Client* client)
 			elm = p;
 		}
 	}
-	_mutex.unlock();
+	_mutex.unlock(7);
 	return elm;
 }
 
@@ -136,7 +136,7 @@ ClientTopicElement* AggregateTopicElement::getNextClientTopicElement(ClientTopic
 
 void AggregateTopicElement::eraseClient(Client* client)
 {
-	_mutex.lock();
+	_mutex.lock(8);
 
 	ClientTopicElement* p = find(client);
 	if ( p != nullptr )
@@ -164,7 +164,7 @@ void AggregateTopicElement::eraseClient(Client* client)
 		}
 		delete p;
 	}
-	_mutex.unlock();
+	_mutex.unlock(8);
 }
 
 /*=====================================
@@ -184,7 +184,7 @@ AggregateTopicTable::~AggregateTopicTable()
 AggregateTopicElement* AggregateTopicTable::add(Topic* topic, Client* client)
 {
 	AggregateTopicElement* elm = nullptr;
-	_mutex.lock();
+	_mutex.lock(9);
 	elm = getAggregateTopicElement(topic);
 	if ( elm != nullptr )
 	{
@@ -209,7 +209,7 @@ AggregateTopicElement* AggregateTopicTable::add(Topic* topic, Client* client)
 			_tail = elm;
 		}
 	}
-	_mutex.unlock();
+	_mutex.unlock(9);
 	return elm;
 }
 
@@ -217,7 +217,7 @@ void AggregateTopicTable::erase(Topic* topic, Client* client)
 {
 	AggregateTopicElement* elm = nullptr;
 
-	_mutex.lock();
+	_mutex.lock(10);
 	elm = getAggregateTopicElement(topic);
 
 	if ( elm != nullptr )
@@ -228,7 +228,7 @@ void AggregateTopicTable::erase(Topic* topic, Client* client)
 	{
 		erase(elm);
 	}
-	_mutex.unlock();
+	_mutex.unlock(10);
 	return;
 }
 

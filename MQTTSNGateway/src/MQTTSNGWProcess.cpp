@@ -121,7 +121,7 @@ void Process::initialize(int argc, char** argv)
 
 void Process::putLog(const char* format, ...)
 {
-	_mt.lock();
+	_mt.lock(28);
 	va_list arg;
 	va_start(arg, format);
 	vsprintf(_rbdata, format, arg);
@@ -138,7 +138,7 @@ void Process::putLog(const char* format, ...)
 			printf("%s", _rbdata);
 		}
 	}
-	_mt.unlock();
+	_mt.unlock(28);
 }
 
 int Process::getArgc()
@@ -210,7 +210,7 @@ int Process::getParam(const char* parameter, char* value, size_t vlen)
 const char* Process::getLog()
 {
 	int len = 0;
-	_mt.lock();
+	_mt.lock(29);
 	while ((len = _rb->get(_rbdata, PROCESS_LOG_BUFFER_SIZE)) == 0)
 	{
 		_rbsem->timedwait(1000);
@@ -220,7 +220,7 @@ const char* Process::getLog()
 		}
 	}
 	*(_rbdata + len) = 0;
-	_mt.unlock();
+	_mt.unlock(29);
 	return _rbdata;
 }
 
@@ -310,15 +310,15 @@ void MultiTaskProcess::waitStop(void)
 
 void MultiTaskProcess::threadStopped(void)
 {
-	_mutex.lock();
+	_mutex.lock(30);
 	_stopCount++;
-	_mutex.unlock();
+	_mutex.unlock(30);
 
 }
 
 void MultiTaskProcess::attach(Thread* thread)
 {
-	_mutex.lock();
+	_mutex.lock(31);
 	if (_threadCount < MQTTSNGW_MAX_TASK)
 	{
 		_threadList[_threadCount] = thread;
@@ -326,17 +326,17 @@ void MultiTaskProcess::attach(Thread* thread)
 	}
 	else
 	{
-		_mutex.unlock();
+		_mutex.unlock(31);
 		throw Exception("Full of Threads");
 	}
-	_mutex.unlock();
+	_mutex.unlock(31);
 }
 
 int MultiTaskProcess::getParam(const char* parameter, char* value, size_t vlen)
 {
-	_mutex.lock();
+	_mutex.lock(32);
 	int rc = Process::getParam(parameter, value, vlen);
-	_mutex.unlock();
+	_mutex.unlock(32);
 	if (rc == -1)
 	{
 		throw Exception("No config file.");

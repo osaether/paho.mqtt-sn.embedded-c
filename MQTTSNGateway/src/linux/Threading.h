@@ -40,8 +40,8 @@ public:
 	Mutex();
 	Mutex(const char* name);
 	~Mutex();
-	void lock(void);
-	void unlock(void);
+	void lock(int n);
+	void unlock(int n);
 
 private:
 	pthread_mutex_t _mutex;

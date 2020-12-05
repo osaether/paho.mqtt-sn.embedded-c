@@ -57,7 +57,7 @@ bool TCPStack::isValid()
 
 void TCPStack::close()
 {
-	_mutex.lock();
+	_mutex.lock(33);
 	if (_sockfd > 0)
 	{
 		::close(_sockfd);
@@ -68,7 +68,7 @@ void TCPStack::close()
 			_addrinfo = 0;
 		}
 	}
-	_mutex.unlock();
+	_mutex.unlock(33);
 
 }
 
@@ -255,7 +255,7 @@ Network::~Network()
 bool Network::connect(const char* host, const char* port)
 {
 	bool rc = false;
-	_mutex.lock();
+	_mutex.lock(34);
 	if (_secureFlg)
 	{
 		goto exit;
@@ -270,7 +270,7 @@ bool Network::connect(const char* host, const char* port)
 	}
 	rc = true;
 exit:
-	_mutex.unlock();
+	_mutex.unlock(34);
 	return rc;
 }
 
@@ -280,7 +280,7 @@ bool Network::connect(const char* host, const char* port, const char* caPath, co
 	char peer_CN[256];
 	bool rc;
 
-	_mutex.lock();
+	_mutex.lock(35);
 	try
 	{
 		if (!_secureFlg)
@@ -413,7 +413,7 @@ bool Network::connect(const char* host, const char* port, const char* caPath, co
 	{
 		rc = x;
 	}
-	_mutex.unlock();
+	_mutex.unlock(35);
 	return rc;
 }
 
@@ -431,11 +431,11 @@ int Network::send(const uint8_t* buf, uint16_t length)
 	}
 	else
 	{
-		_mutex.lock();
+		_mutex.lock(36);
 
 		if ( !_ssl )
 		{
-			_mutex.unlock();
+			_mutex.unlock(36);
 			return -1;
 		}
 		_busy = true;
@@ -464,7 +464,7 @@ int Network::send(const uint8_t* buf, uint16_t length)
 						if (length == 0)
 						{
 							_busy = false;
-							_mutex.unlock();
+							_mutex.unlock(36);
 							return bpos;
 						}
 						break;
@@ -477,7 +477,7 @@ int Network::send(const uint8_t* buf, uint16_t length)
 						ERR_error_string_n(ERR_get_error(), errmsg, sizeof(errmsg));
 						WRITELOG("TLSStack::send() default %s\n", errmsg);
 						_busy = false;
-						_mutex.unlock();
+						_mutex.unlock(36);
 						return -1;
 					}
 				}
@@ -506,11 +506,11 @@ int Network::recv(uint8_t* buf, uint16_t len)
 	{
 		return 0;
 	}
-	_mutex.lock();
+	_mutex.lock(37);
 
 	if ( !_ssl )
 	{
-		_mutex.unlock();
+		_mutex.unlock(37);
 		return 0;
 	}
 
@@ -527,7 +527,7 @@ loop:
 		{
 		case SSL_ERROR_NONE:
 			_busy = false;
-			_mutex.unlock();
+			_mutex.unlock(37);
 			return rlen + bpos;
 			break;
 		case SSL_ERROR_ZERO_RETURN:
@@ -536,7 +536,7 @@ loop:
 			_numOfInstance--;
 			//TCPStack::close();
 			_busy = false;
-			_mutex.unlock();
+			_mutex.unlock(37);
 			return -1;
 			break;
 		case SSL_ERROR_WANT_READ:
@@ -551,14 +551,14 @@ loop:
 			_numOfInstance--;
 			//TCPStack::close();
 			_busy = false;
-			_mutex.unlock();
+			_mutex.unlock(37);
 			return -1;
 			break;
 		default:
 			ERR_error_string_n(ERR_get_error(), errmsg, sizeof(errmsg));
 			WRITELOG("Network::recv() %s\n", errmsg);
 			_busy = false;
-			_mutex.unlock();
+			_mutex.unlock(37);
 			return -1;
 		}
 	} while (SSL_pending(_ssl) && !readBlocked);
@@ -585,7 +585,7 @@ loop:
 			ERR_error_string_n(ERR_get_error(), errmsg, sizeof(errmsg));
 			WRITELOG("TLSStack::recv() select %s\n", errmsg);
 			_busy = false;
-			_mutex.unlock();
+			_mutex.unlock(37);
 			return -1;
 		}
 	}
@@ -593,7 +593,7 @@ loop:
 
 void Network::close(void)
 {
-	_mutex.lock();
+	_mutex.lock(38);
 	if (_secureFlg)
 	{
 		if (_ssl)
@@ -618,7 +618,7 @@ void Network::close(void)
 		}
 	}
 	TCPStack::close();
-	_mutex.unlock();
+	_mutex.unlock(38);
 }
 
 bool Network::isValid()
