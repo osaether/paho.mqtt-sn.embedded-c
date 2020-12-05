@@ -55,7 +55,7 @@ public:
 	void resetRingBuffer(void);
 	int  getArgc(void);
 	char** getArgv(void);
-	int getParam(const char* parameter, char* value);
+	int getParam(const char* parameter, char* value, size_t vlen);
 	const char* getLog(void);
 	int checkSignal(void);
 	const string* getConfigDirName(void);
@@ -81,7 +81,7 @@ public:
 	MultiTaskProcess(void);
 	~MultiTaskProcess();
 	void initialize(int argc, char** argv);
-	int getParam(const char* parameter, char* value);
+	int getParam(const char* parameter, char* value, size_t vlen);
 	void run(void);
 	void waitStop(void);
 	void threadStopped(void);

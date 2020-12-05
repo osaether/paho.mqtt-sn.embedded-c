@@ -179,31 +179,31 @@ int SensorNetwork::initialize(void)
 	string interface;
 	unsigned int hops = 1;
 
-	if (theProcess->getParam("GatewayUDP6Bind", param) == 0)
+	if (theProcess->getParam("GatewayUDP6Bind", param, sizeof(param)) == 0)
 	{
 		ip = param;
 		_description = "GatewayUDP6Bind: ";
 		_description += param;
 	}
-	if (theProcess->getParam("GatewayUDP6Port", param) == 0)
+	if (theProcess->getParam("GatewayUDP6Port", param, sizeof(param)) == 0)
 	{
 		unicastPortNo = atoi(param);
 		_description += " Gateway Port: ";
 		_description += param;
 	}
-	if (theProcess->getParam("GatewayUDP6Broadcast", param) == 0)
+	if (theProcess->getParam("GatewayUDP6Broadcast", param, sizeof(param)) == 0)
 	{
 		broadcast = param;
 		_description += " Broadcast Address: ";
 		_description += param;
 	}
-	if (theProcess->getParam("GatewayUDP6If", param) == 0)
+	if (theProcess->getParam("GatewayUDP6If", param, sizeof(param)) == 0)
 	{
 		interface = param;
 		_description += " Interface: ";
 		_description += param;
 	}
-	if (theProcess->getParam("GatewayUDP6Hops", param) == 0)
+	if (theProcess->getParam("GatewayUDP6Hops", param, sizeof(param)) == 0)
 	{
 		hops = atoi(param);
 		_description += " Hops: ";

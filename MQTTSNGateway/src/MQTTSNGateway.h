@@ -193,7 +193,7 @@ public:
 	LightIndicator* getLightIndicator(void);
 	GatewayParams* getGWParams(void);
 	AdapterManager* getAdapterManager(void);
-	int getParam(const char* parameter, char* value);
+	int getParam(const char* parameter, char* value, size_t vlen);
 	char* getClientListFileName(void);
 	char* getPredefinedTopicFileName(void);
 

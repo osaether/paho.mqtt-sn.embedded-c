@@ -117,9 +117,9 @@ Gateway::~Gateway()
 //    WRITELOG("Gateway        is deleted normally.\r\n");
 }
 
-int Gateway::getParam(const char* parameter, char* value)
+int Gateway::getParam(const char* parameter, char* value, size_t vlen)
 {
-    return MultiTaskProcess::getParam(parameter, value);
+    return MultiTaskProcess::getParam(parameter, value, vlen);
 }
 
 char* Gateway::getClientListFileName(void)
@@ -145,37 +145,37 @@ void Gateway::initialize(int argc, char** argv)
     fileName = _params.configDir + *getConfigFileName();
     _params.configName = strdup(fileName.c_str());
 
-	if (getParam("BrokerName", param) == 0)
+	if (getParam("BrokerName", param, sizeof(param)) == 0)
 	{
 		_params.brokerName = strdup(param);
 	}
-	if (getParam("BrokerPortNo", param) == 0)
+	if (getParam("BrokerPortNo", param, sizeof(param)) == 0)
 	{
 		_params.port = strdup(param);
 	}
-	if (getParam("BrokerSecurePortNo", param) == 0)
+	if (getParam("BrokerSecurePortNo", param, sizeof(param)) == 0)
 	{
 		_params.portSecure = strdup(param);
 	}
 
-	if (getParam("CertKey", param) == 0)
+	if (getParam("CertKey", param, sizeof(param)) == 0)
 	{
 		_params.certKey = strdup(param);
 	}
-	if (getParam("PrivateKey", param) == 0)
+	if (getParam("PrivateKey", param, sizeof(param)) == 0)
 		{
 			_params.privateKey = strdup(param);
 		}
-	if (getParam("RootCApath", param) == 0)
+	if (getParam("RootCApath", param, sizeof(param)) == 0)
 	{
 		_params.rootCApath = strdup(param);
 	}
-	if (getParam("RootCAfile", param) == 0)
+	if (getParam("RootCAfile", param, sizeof(param)) == 0)
 	{
 		_params.rootCAfile = strdup(param);
 	}
 
-	if (getParam("GatewayID", param) == 0)
+	if (getParam("GatewayID", param, sizeof(param)) == 0)
 	{
 		_params.gatewayId = atoi(param);
 	}
@@ -185,7 +185,7 @@ void Gateway::initialize(int argc, char** argv)
 		throw Exception( "Gateway::initialize: invalid Gateway Id");
 	}
 
-	if (getParam("GatewayName", param) == 0)
+	if (getParam("GatewayName", param, sizeof(param)) == 0)
 	{
 		_params.gatewayName = strdup(param);
 	}
@@ -196,34 +196,34 @@ void Gateway::initialize(int argc, char** argv)
 	}
 
 	_params.mqttVersion = DEFAULT_MQTT_VERSION;
-	if (getParam("MQTTVersion", param) == 0)
+	if (getParam("MQTTVersion", param, sizeof(param)) == 0)
 	{
 		_params.mqttVersion = atoi(param);
 	}
 
 	_params.maxInflightMsgs = DEFAULT_MQTT_VERSION;
-	if (getParam("MaxInflightMsgs", param) == 0)
+	if (getParam("MaxInflightMsgs", param, sizeof(param)) == 0)
 	{
 		_params.maxInflightMsgs = atoi(param);
 	}
 
 	_params.keepAlive = DEFAULT_KEEP_ALIVE_TIME;
-	if (getParam("KeepAlive", param) == 0)
+	if (getParam("KeepAlive", param, sizeof(param)) == 0)
 	{
 		_params.keepAlive = atoi(param);
 	}
 
-	if (getParam("LoginID", param) == 0)
+	if (getParam("LoginID", param, sizeof(param)) == 0)
 	{
 		_params.loginId = strdup(param);
 	}
 
-	if (getParam("Password", param) == 0)
+	if (getParam("Password", param, sizeof(param)) == 0)
 	{
 		_params.password = strdup(param);
 	}
 
-	if (getParam("ClientAuthentication", param) == 0)
+	if (getParam("ClientAuthentication", param, sizeof(param)) == 0)
 	{
 		if (!strcasecmp(param, "YES"))
 		{
@@ -231,24 +231,24 @@ void Gateway::initialize(int argc, char** argv)
 		}
 	}
 
-	if (getParam("ClientsList", param) == 0)
+	if (getParam("ClientsList", param, sizeof(param)) == 0)
 	{
 		_params.clientListName = strdup(param);
 	}
 
-	if (getParam("PredefinedTopic", param) == 0)
+	if (getParam("PredefinedTopic", param, sizeof(param)) == 0)
 	{
 		if ( !strcasecmp(param, "YES") )
 		{
 			_params.predefinedTopic = true;
-			if (getParam("PredefinedTopicList", param) == 0)
+			if (getParam("PredefinedTopicList", param, sizeof(param)) == 0)
 			{
 				_params.predefinedTopicFileName = strdup(param);
 			}
 		}
 	}
 
-	if (getParam("AggregatingGateway", param) == 0)
+	if (getParam("AggregatingGateway", param, sizeof(param)) == 0)
 	{
 		if ( !strcasecmp(param, "YES") )
 		{
@@ -256,7 +256,7 @@ void Gateway::initialize(int argc, char** argv)
 		}
 	}
 
-	if (getParam("Forwarder", param) == 0)
+	if (getParam("Forwarder", param, sizeof(param)) == 0)
 	{
 		if ( !strcasecmp(param, "YES") )
 		{
@@ -264,7 +264,7 @@ void Gateway::initialize(int argc, char** argv)
 		}
 	}
 
-	if (getParam("QoS-1", param) == 0)
+	if (getParam("QoS-1", param, sizeof(param)) == 0)
 	{
 		if ( !strcasecmp(param, "YES") )
 		{

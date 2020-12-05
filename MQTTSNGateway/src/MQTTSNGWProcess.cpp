@@ -106,7 +106,7 @@ void Process::initialize(int argc, char** argv)
 	_rbsem = new NamedSemaphore(MQTTSNGW_RB_SEMAPHOR_NAME, 0);
 	_rb = new RingBuffer(_configDir.c_str());
 
-	if (getParam("ShearedMemory", param) == 0)
+	if (getParam("ShearedMemory", param, sizeof(param)) == 0)
 	{
 		if (!strcasecmp(param, "YES"))
 		{
@@ -151,7 +151,7 @@ char** Process::getArgv()
 	return _argv;
 }
 
-int Process::getParam(const char* parameter, char* value)
+int Process::getParam(const char* parameter, char* value, size_t vlen)
 {
 	char str[MQTTSNGW_PARAM_MAX];
 	char param[MQTTSNGW_PARAM_MAX];
@@ -196,6 +196,8 @@ int Process::getParam(const char* parameter, char* value)
 					param[j++] = param[i++];
 				param[j] = '\0';
 			}
+			if (strlen(param) > vlen)
+				WRITELOG("ERROR: Process::getParam buffer overflow\n");
 			strcpy(value, param);
 			fclose(fp);
 			return 0;
@@ -330,10 +332,10 @@ void MultiTaskProcess::attach(Thread* thread)
 	_mutex.unlock();
 }
 
-int MultiTaskProcess::getParam(const char* parameter, char* value)
+int MultiTaskProcess::getParam(const char* parameter, char* value, size_t vlen)
 {
 	_mutex.lock();
-	int rc = Process::getParam(parameter, value);
+	int rc = Process::getParam(parameter, value, vlen);
 	_mutex.unlock();
 	if (rc == -1)
 	{
