@@ -140,7 +140,8 @@ void Mutex::lock(void)
 			int res = pthread_mutex_lock(&_mutex);
 			if (res)
 			{
-				WRITELOG("pthread_mutex_lock returned %d", res);
+				WRITELOG("pthread_mutex_lock returned %d, _count=%u, __nusers=%u, __owner=%d", res, _mutex.__data.__count, _mutex.__data.__nusers, _mutex.__data.__owner);
+
 			}
 		} catch (char* errmsg)
 		{
@@ -163,7 +164,7 @@ void Mutex::unlock(void)
 			int res = pthread_mutex_unlock(&_mutex);
 			if (res)
 			{
-				WRITELOG("pthread_mutex_unlock() returned %d", res);
+				WRITELOG("pthread_mutex_unlock() returned %d, _count=%u, __nusers=%u, __owner=%d", res, _mutex.__data.__count, _mutex.__data.__nusers, _mutex.__data.__owner);
 			}
 		} catch (char* errmsg)
 		{
