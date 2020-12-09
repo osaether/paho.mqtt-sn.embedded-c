@@ -134,7 +134,7 @@ void BrokerRecvTask::run(void)
 							{
 								if ( rc == 0 )  // Disconnected
 								{
-									client->getNetwork()->close();
+									client->getNetwork()->close(2);
 									delete packet;
 
 									/* delete client when the client is not authorized & session is clean */

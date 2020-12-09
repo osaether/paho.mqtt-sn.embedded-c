@@ -85,7 +85,7 @@ void BrokerSendTask::run()
 
 			if ( packet->getType() == CONNECT && client->getNetwork()->isValid() )
 			{
-				client->getNetwork()->close();
+				client->getNetwork()->close(6);
 			}
 
 			if ( !client->getNetwork()->isValid() )
@@ -108,7 +108,7 @@ void BrokerSendTask::run()
 					WRITELOG("%s BrokerSendTask: %s can't connect to the broker. errno=%d %s %s\n",
 							ERRMSG_HEADER, client->getClientId(), errno, strerror(errno), ERRMSG_FOOTER);
 					delete ev;
-					client->getNetwork()->close();
+					client->getNetwork()->close(3);
 					continue;
 				}
 			}
@@ -123,7 +123,7 @@ void BrokerSendTask::run()
 				}
 				else if ( packet->getType() == DISCONNECT )
 				{
-					client->getNetwork()->close();
+					client->getNetwork()->close(4);
 					client->disconnected();
 				}
 				log(client, packet);
@@ -134,7 +134,7 @@ void BrokerSendTask::run()
 						ERRMSG_HEADER, client->getClientId(), rc == -1 ? errno : 0, strerror(errno), ERRMSG_FOOTER);
 				if ( errno != EBADF )
 				{
-					client->getNetwork()->close();
+					client->getNetwork()->close(5);
 				}
 
 				/* Disconnect the client */

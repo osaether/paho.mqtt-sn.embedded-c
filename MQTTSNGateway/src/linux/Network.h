@@ -73,7 +73,7 @@ public:
 
 	bool connect(const char* host, const char* port, const char* caPath, const char* caFile, const char* cert, const char* prvkey);
 	bool connect(const char* host, const char* port);
-	void close(void);
+	void close(int n);
 	int  send(const uint8_t* buf, uint16_t length);
 	int  recv(uint8_t* buf, uint16_t len);
 

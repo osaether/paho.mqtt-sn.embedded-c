@@ -249,7 +249,7 @@ Network::Network(bool secure) :
 
 Network::~Network()
 {
-	close();
+	close(0);
 }
 
 bool Network::connect(const char* host, const char* port)
@@ -591,8 +591,9 @@ loop:
 	}
 }
 
-void Network::close(void)
+void Network::close(int n)
 {
+	WRITELOG("Network::close(%d)\n", n);
 	_mutex.lock(38);
 	if (_secureFlg)
 	{
